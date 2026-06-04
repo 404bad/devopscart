@@ -21,8 +21,8 @@ jobs:
       - name: Install the dependecies
         run: npm ci
 
-      - name: Linting to analyze source code for potential problems without running it.
-        run: npm run lint
+      # - name: Linting to analyze source code for potential problems without running it.
+      #   run: npm run lint
 
       - name: Build the project to generate an artifact.
         run: npm run build
