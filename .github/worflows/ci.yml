@@ -1,0 +1,33 @@
+name: DevOps cart CI
+
+on:
+  push:
+   branches:
+     - main
+    
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository on the runner
+        uses: actions/checkout@v6
+
+      - name: Setup node version 20 in the runner
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+        
+      - name: Install the dependecies
+        run: npm ci
+
+      - name: Linting to analyze source code for potential problems without running it.
+        run: npm run lint
+
+      - name: Build the project to generate an artifact.
+        run: npm run build
+      
+      - name: Show build output directory
+        run: |
+          echo "Build output directory: .next"
+          ls -la .next
