@@ -19,7 +19,7 @@ jobs:
           node-version: 20
         
       - name: Install the dependecies
-        run: npm ci
+        run: npm install --save-dev eslint eslint-config-next
 
       - name: Linting to analyze source code for potential problems without running it.
         run: npm run lint
