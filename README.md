@@ -40,3 +40,15 @@ jobs:
 
 4. Added env vars in the github secrets and vars and use it in the pipeline
 
+Add variable in GitHub
+
+```bash
+GitHub Repo -> Settings -> Secrets and variables -> Actions -> Variables
+```
+
+5. use it in ci
+
+```yml
+ env:
+      NEXT_PUBLIC_CURRENCY_SYMBOL: ${{ vars.NEXT_PUBLIC_CURRENCY_SYMBOL }}
+```

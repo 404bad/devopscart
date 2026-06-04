@@ -33,5 +33,4 @@ jobs:
       - name: Show build output directory
         run: |
           echo "Build output directory: .next"
-          echo NEXT_PUBLIC_CURRENCY_SYMBOL this is only for test
           ls -la .next
