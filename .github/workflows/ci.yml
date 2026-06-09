@@ -26,7 +26,7 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: npm ci
+        run: npm Install
 
       # Dependency Vulnerability Scan
       - name: Audit Dependencies
