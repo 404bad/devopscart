@@ -27,8 +27,8 @@ jobs:
           BRANCH_NAME=${{ github.ref_name }}
           docker build -t devops-cart-app .
           docker tag devops-cart-app ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:$BRANCH_NAME
-          docker tag flask-message-app ${{ secrets.DOCKERHUB_USERNAME }}/flask-message-app:latest
+          docker tag devops-cart-app ${{ secrets.DOCKERHUB_USERNAME }}/fdevops-cart-app:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:$BRANCH_NAME
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/flask-message-app:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:latest
 
      
