@@ -16,21 +16,17 @@ jobs:
       - name: Checkout repository on the runner
         uses: actions/checkout@v6
 
-      - name: Setup node version 20 in the runner
-        uses: actions/setup-node@v6
-        with:
-          node-version: 20
-        
-      - name: Install the dependecies
-        run: npm ci
-
-      # - name: Linting to analyze source code for potential problems without running it.
-      #   run: npm run lint
-
-      - name: Build the project to generate an artifact.
-        run: npm run build
-      
-      - name: Show build output directory
+      - name: Log in to Docker Hub
         run: |
-          echo "Build output directory: .next"
-          ls -la .next
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+            --username "${{ secrets.DOCKERHUB_USERNAME }}" \
+            --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          BRANCH_NAME=${{ github.ref_name }}
+          docker build -t devops-cart-app .
+          docker tag devops-cart-app ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:$BRANCH_NAME
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:$BRANCH_NAME
+
+     
