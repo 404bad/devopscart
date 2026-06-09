@@ -1,34 +1,68 @@
-name: DevOps cart CI
+name: DevOps Cart CI
 
 on:
   push:
-   branches:
-     - main
-    
+    branches:
+      - main
+
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
-  build-and-test:
+  build-test-scan:
     runs-on: ubuntu-latest
 
     env:
-      NEXT_PUBLIC_CURRENCY_SYMBOL: ${{vars.NEXT_PUBLIC_CURRENCY_SYMBOL}}
+      NEXT_PUBLIC_CURRENCY_SYMBOL: ${{ vars.NEXT_PUBLIC_CURRENCY_SYMBOL }}
 
     steps:
-      - name: Checkout repository on the runner
-        uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Dependency Vulnerability Scan
+      - name: NPM Audit
+        run: npm audit --audit-level=high
+
+      # Secret Scanning
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+
+      # Docker Login
+      - name: Login to Docker Hub
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
-            --username "${{ secrets.DOCKERHUB_USERNAME }}" \
-            --password-stdin
+          --username "${{ secrets.DOCKERHUB_USERNAME }}" \
+          --password-stdin
 
-      - name: Build and push Docker image
+      # Build Image
+      - name: Build Docker Image
+        run: docker build -t devops-cart-app .
+
+      # Container Security Scan
+      - name: Scan Docker Image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: devops-cart-app
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: 1
+
+      # Push Image
+      - name: Push Docker Image
         run: |
           BRANCH_NAME=${{ github.ref_name }}
-          docker build -t devops-cart-app .
+
           docker tag devops-cart-app ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:$BRANCH_NAME
           docker tag devops-cart-app ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:latest
+
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:$BRANCH_NAME
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-cart-app:latest
-
-     
