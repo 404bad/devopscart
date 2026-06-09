@@ -5,7 +5,7 @@ COPY package*.json ./
 
 # Install project dependencies with frozen lockfile for reproducible builds
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --no-audit --no-fund;
+    npm install --no-audit --no-fund;
 
 #  Stage 2: Build Next.js application in standalone mode
 FROM node:24-alpine AS builder
